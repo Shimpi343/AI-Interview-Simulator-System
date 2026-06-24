@@ -169,7 +169,7 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div className="rounded-[1.5rem] border border-emerald-500/30 bg-emerald-500/10 p-5 shadow-md">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">✓ Highlights</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Highlights</p>
           <ul className="mt-2 list-disc pl-5 text-sm text-emerald-100 space-y-1">
             {feedback.highlights.map((item, idx) => (
               <li key={idx}>{item}</li>
@@ -178,7 +178,7 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
         </div>
 
         <div className="rounded-[1.5rem] border border-orange-500/30 bg-orange-500/10 p-5 shadow-md">
-          <p className="text-xs uppercase tracking-[0.2em] text-orange-400">⚡ Improvements</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-orange-400">Improvements</p>
           <ul className="mt-2 list-disc pl-5 text-sm text-orange-100 space-y-1">
             {feedback.improvements.map((item, idx) => (
               <li key={idx}>{item}</li>
@@ -189,7 +189,7 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
       {feedback.grammar_issues?.length ? (
         <div className="mt-4 rounded-[1.5rem] border border-rose-500/30 bg-rose-500/10 p-5 shadow-md">
-          <p className="text-xs uppercase tracking-[0.2em] text-rose-400">📝 Grammar issues with exact fixes</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-rose-400">Grammar issues with exact fixes</p>
           <div className="mt-3 space-y-3">
             {feedback.grammar_issues.map((issue, idx) => (
               <div key={idx} className="rounded-2xl border border-slate-700/50 bg-slate-800/40 p-4 text-sm text-slate-100">
@@ -205,7 +205,7 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
       {feedback.sentence_corrections?.length ? (
         <div className="mt-4 rounded-[1.5rem] border border-cyan-500/30 bg-cyan-500/10 p-5 shadow-md">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-400">🔄 Sentence-by-sentence corrections</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-400">Sentence-by-sentence corrections</p>
           <p className="mt-1 text-xs text-cyan-300">The rows below show what changed in each sentence so you can see the exact grammar fix.</p>
           <div className="mt-3 space-y-3">
             {feedback.sentence_corrections.map((item, idx) => (
@@ -223,16 +223,16 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
       {feedback.corrected_answer ? (
         <div className="mt-4 rounded-[1.5rem] border border-emerald-500/30 bg-emerald-500/10 p-5 text-sm text-emerald-100 shadow-md">
-          <p className="font-semibold text-emerald-300">✓ Corrected answer</p>
+          <p className="font-semibold text-emerald-300">Corrected answer</p>
           <p className="mt-2 leading-relaxed whitespace-pre-wrap text-emerald-50">{feedback.corrected_answer}</p>
         </div>
       ) : null}
 
       {feedback.real_world_answer ? (
         <div className="mt-4 rounded-[1.5rem] border border-cyan-500/30 bg-cyan-500/10 p-5 text-sm text-cyan-100 shadow-md">
-          <p className="font-semibold text-cyan-300">🎯 Real-world reference answer</p>
+          <p className="font-semibold text-cyan-300">Real-world reference answer</p>
           <p className="mt-2 whitespace-pre-wrap leading-relaxed text-cyan-50">{feedback.real_world_answer}</p>
-          <p className="mt-3 text-xs text-cyan-300/70">⭐ This is a strong answer pattern you can learn from and adapt to your own experiences.</p>
+          <p className="mt-3 text-xs text-cyan-300/70">Use this as a strong answer pattern you can adapt to your own experiences.</p>
         </div>
       ) : null}
 
@@ -245,9 +245,9 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
       {feedback.sample_better_answer ? (
         <div className="mt-4 rounded-[1.5rem] border border-orange-500/30 bg-orange-500/10 p-5 text-sm text-orange-100 shadow-md">
-          <p className="font-semibold text-orange-300">⚡ Suggested stronger answer using STAR method</p>
+          <p className="font-semibold text-orange-300">Suggested stronger answer using STAR method</p>
           <p className="mt-2 leading-relaxed text-orange-50">{feedback.sample_better_answer}</p>
-          <p className="mt-3 text-xs text-orange-300/70">💡 Notice how this answer includes: Situation/Task, specific Action, measurable Results, and why it mattered.</p>
+          <p className="mt-3 text-xs text-orange-300/70">Notice how this answer includes: Situation/Task, specific Action, measurable Results, and why it mattered.</p>
         </div>
       ) : null}
     </section>

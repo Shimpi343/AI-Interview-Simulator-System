@@ -1,5 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 
+const PHONE_CAMERA_KEYWORDS = [
+  "phone",
+  "iphone",
+  "android",
+  "droidcam",
+  "ivcam",
+  "epoccam",
+  "continuity",
+  "obs",
+  "snap camera",
+];
+
+const LAPTOP_CAMERA_KEYWORDS = [
+  "integrated",
+  "built-in",
+  "builtin",
+  "internal",
+  "facetime",
+  "webcam",
+  "camera",
+  "hd user facing",
+];
+
 
 function getCameraErrorMessage(err) {
   switch (err?.name) {
@@ -16,6 +39,35 @@ function getCameraErrorMessage(err) {
   }
 }
 
+function getCameraScore(device) {
+  const label = device.label.toLowerCase();
+  let score = 0;
+
+  if (PHONE_CAMERA_KEYWORDS.some((keyword) => label.includes(keyword))) score -= 100;
+  if (LAPTOP_CAMERA_KEYWORDS.some((keyword) => label.includes(keyword))) score += 20;
+  if (label.includes("usb")) score -= 8;
+  if (label.includes("front")) score += 4;
+
+  return score;
+}
+
+async function getPreferredCameraDevice() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const cameras = devices.filter((device) => device.kind === "videoinput");
+
+  if (!cameras.length) return null;
+
+  return [...cameras].sort((a, b) => getCameraScore(b) - getCameraScore(a))[0];
+}
+
+async function requestCameraStream(deviceId, includeAudio = true) {
+  const video = deviceId
+    ? { deviceId: { exact: deviceId }, width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+    : { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" };
+
+  return navigator.mediaDevices.getUserMedia({ video, audio: includeAudio });
+}
+
 
 export default function VideoCapture({ onFramesCapture, isRecording, onVideoRecorded, onCameraStatusChange }) {
   const videoRef = useRef(null);
@@ -29,6 +81,8 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
   const [permissionError, setPermissionError] = useState("");
   const [playbackUrl, setPlaybackUrl] = useState(null);
   const [recordingStatus, setRecordingStatus] = useState("idle");
+  const [selectedCameraLabel, setSelectedCameraLabel] = useState("");
+  const [cameraCount, setCameraCount] = useState(0);
   const onVideoRecordedRef = useRef(onVideoRecorded);
   const onCameraStatusChangeRef = useRef(onCameraStatusChange);
   const playbackUrlRef = useRef(null);
@@ -60,28 +114,34 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
       try {
         let stream;
         let usedVideoOnly = false;
+        let selectedCamera = null;
 
         try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: 320, height: 240 },
-            audio: true,
-          });
+          const permissionStream = await requestCameraStream(null, false);
+          permissionStream.getTracks().forEach((track) => track.stop());
+          selectedCamera = await getPreferredCameraDevice();
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          setCameraCount(devices.filter((device) => device.kind === "videoinput").length);
+          stream = await requestCameraStream(selectedCamera?.deviceId, true);
         } catch (audioErr) {
           console.warn("[VC] Audio+video request failed, retrying video-only:", audioErr);
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: 320, height: 240 },
-            audio: false,
-          });
+          if (!selectedCamera) {
+            selectedCamera = await getPreferredCameraDevice();
+          }
+          stream = await requestCameraStream(selectedCamera?.deviceId, false);
           usedVideoOnly = true;
         }
 
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          const activeTrack = stream.getVideoTracks()[0];
+          const activeLabel = activeTrack?.label || selectedCamera?.label || "Laptop camera";
+          setSelectedCameraLabel(activeLabel);
           setCameraActive(true);
           setPermissionError(usedVideoOnly ? "Microphone unavailable. Recording will continue with video only." : "");
           if (onCameraStatusChangeRef.current) {
-            onCameraStatusChangeRef.current(true, "");
+            onCameraStatusChangeRef.current(true, `Using ${activeLabel}`);
           }
 
           try {
@@ -223,7 +283,7 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
         </p>
       )}
       {recordingStatus !== "saved" && (
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-950 shadow-[0_18px_40px_rgba(15,23,42,0.15)]">
+        <div className="overflow-hidden rounded-[1.5rem] border border-cyan-400/25 bg-slate-950 shadow-[0_18px_40px_rgba(15,23,42,0.25)]">
           <video
             ref={videoRef}
             autoPlay
@@ -237,6 +297,16 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
             <span className="uppercase tracking-[0.2em]">Live capture</span>
             <span>{cameraActive ? "Camera ready" : "Awaiting permission"}</span>
           </div>
+          {cameraActive ? (
+            <div className="border-t border-white/10 bg-slate-900/80 px-3 py-2 text-[11px] text-slate-300">
+              <p className="truncate">
+                Active camera: <span className="font-semibold text-cyan-200">{selectedCameraLabel || "Laptop camera"}</span>
+              </p>
+              {cameraCount > 1 ? (
+                <p className="mt-1 text-slate-500">Laptop camera is preferred automatically when multiple cameras are connected.</p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       )}
       {recordingStatus === "recording" && (

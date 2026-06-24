@@ -5,17 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --bg-start: #0a0e27;
-  --bg-mid: #0f172a;
-  --bg-end: #1a1f3a;
+  --bg-start: #07111f;
+  --bg-mid: #0f1b2d;
+  --bg-end: #172133;
   --card: rgba(15, 23, 42, 0.88);
-  --line: rgba(0, 217, 255, 0.12);
-  --accent: #ff7a4c;
-  --accent-strong: #ff5f2d;
-  --mint: #10b981;
-  --neon-cyan: #00d9ff;
-  --neon-magenta: #ff00ff;
-  --neon-electric: #00ff88;
+  --line: rgba(56, 189, 248, 0.16);
+  --accent: #f59e0b;
+  --accent-strong: #d97706;
+  --mint: #14b8a6;
+  --neon-cyan: #38bdf8;
+  --neon-magenta: #818cf8;
+  --neon-electric: #34d399;
   --text-main: #ffffff;
   --text-muted: #a0aec0;
   --surface: rgba(15, 23, 42, 0.9);
@@ -33,11 +33,9 @@ body {
   font-family: "Sora", "Space Grotesk", "Segoe UI Variable", "Inter", "SF Pro Display", "Segoe UI", sans-serif;
   color: var(--text-main);
   background:
-    radial-gradient(circle at 12% 12%, rgba(0, 217, 255, 0.15) 0%, transparent 25%),
-    radial-gradient(circle at 86% 82%, rgba(255, 0, 255, 0.12) 0%, transparent 22%),
-    radial-gradient(circle at 55% 16%, rgba(0, 255, 136, 0.08) 0%, transparent 20%),
-    radial-gradient(circle at 88% 22%, rgba(255, 122, 76, 0.1) 0%, transparent 28%),
-    linear-gradient(145deg, #0a0e27 0%, #0f172a 35%, #1a1f3a 100%);
+    radial-gradient(circle at 14% 10%, rgba(56, 189, 248, 0.14) 0%, transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(20, 184, 166, 0.1) 0%, transparent 26%),
+    linear-gradient(145deg, #07111f 0%, #0f1b2d 48%, #172133 100%);
   background-attachment: fixed;
   position: relative;
   overflow-x: hidden;
@@ -48,11 +46,10 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(255, 0, 255, 0.06) 0%, transparent 35%),
-    radial-gradient(circle at 40% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 35%);
+    linear-gradient(to right, rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
   pointer-events: none;
-  animation: shift-glow 12s ease-in-out infinite;
   z-index: 0;
 }
 
@@ -77,10 +74,10 @@ select {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(to right, rgba(0, 217, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 217, 255, 0.06) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(circle at center, black 45%, transparent 95%);
+  background-image: linear-gradient(to right, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
 }
 
 .ambient-glow {
@@ -88,10 +85,8 @@ select {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 88% 22%, rgba(255, 122, 76, 0.12), transparent 32%),
-    radial-gradient(circle at 22% 78%, rgba(0, 217, 255, 0.1), transparent 35%),
-    radial-gradient(circle at 15% 85%, rgba(255, 0, 255, 0.08), transparent 30%);
-  animation: ambient-shift 16s ease-in-out infinite;
+    radial-gradient(circle at 88% 22%, rgba(245, 158, 11, 0.1), transparent 32%),
+    radial-gradient(circle at 22% 78%, rgba(56, 189, 248, 0.1), transparent 35%);
 }
 
 /* Particle system */
@@ -113,23 +108,21 @@ select {
 }
 
 .particle.accent {
-  background: radial-gradient(circle, rgba(255, 0, 255, 0.7), transparent);
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.65), transparent);
 }
 
 .particle.energy {
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.6), transparent);
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.6), transparent);
 }
 
 .hero-panel {
   background:
-    radial-gradient(circle at 18% 12%, rgba(0, 217, 255, 0.12) 0%, transparent 26%),
-    radial-gradient(circle at 82% 18%, rgba(255, 0, 255, 0.1) 0%, transparent 24%),
-    linear-gradient(135deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.96) 42%, rgba(17, 24, 39, 0.98));
-  border: 1px solid rgba(0, 217, 255, 0.25);
+    radial-gradient(circle at 18% 12%, rgba(56, 189, 248, 0.14) 0%, transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(20, 184, 166, 0.12) 0%, transparent 26%),
+    linear-gradient(135deg, rgba(2, 6, 23, 0.96), rgba(15, 23, 42, 0.94) 48%, rgba(22, 32, 49, 0.96));
+  border: 1px solid rgba(56, 189, 248, 0.18);
   box-shadow:
-    0 0 40px rgba(0, 217, 255, 0.2),
-    0 0 80px rgba(255, 0, 255, 0.1),
-    0 30px 90px rgba(15, 23, 42, 0.4),
+    0 28px 80px rgba(2, 6, 23, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
 }
@@ -140,22 +133,20 @@ select {
   inset: auto -10% -60% auto;
   width: 40rem;
   height: 40rem;
-  background: radial-gradient(circle, rgba(0, 217, 255, 0.12) 0%, rgba(255, 0, 255, 0.06) 50%, transparent 80%);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(20, 184, 166, 0.06) 50%, transparent 80%);
   pointer-events: none;
-  animation: orb-pulse 4s ease-in-out infinite;
 }
 
 .hero-panel::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, rgba(0, 217, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 217, 255, 0.04) 1px, transparent 1px);
+  background-image: linear-gradient(to right, rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(circle at center, black 52%, transparent 100%);
   opacity: 0.4;
   pointer-events: none;
-  animation: grid-shift 20s linear infinite;
 }
 
 .surface-panel {
@@ -186,11 +177,10 @@ select {
 }
 
 .btn-primary {
-  background: linear-gradient(125deg, #ff7a4c, #ff5f2d);
+  background: linear-gradient(125deg, #0ea5e9, #14b8a6);
   color: white;
   box-shadow:
-    0 16px 36px rgba(255, 95, 45, 0.3),
-    0 0 20px rgba(255, 95, 45, 0.2);
+    0 16px 36px rgba(14, 165, 233, 0.24);
   transition: all 180ms ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -199,8 +189,7 @@ select {
   filter: brightness(1.1);
   transform: translateY(-2px);
   box-shadow:
-    0 20px 50px rgba(255, 95, 45, 0.4),
-    0 0 30px rgba(255, 95, 45, 0.3);
+    0 20px 50px rgba(20, 184, 166, 0.28);
 }
 
 .btn-secondary {

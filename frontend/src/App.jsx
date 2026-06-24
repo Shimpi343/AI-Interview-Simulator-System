@@ -159,28 +159,28 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen px-4 py-8 md:px-8 relative">
+    <div className="min-h-screen px-4 py-6 md:px-8 relative">
       <div id="particles-bg" className="particles" />
       <div className="grid-overlay" />
       <div className="ambient-glow" />
 
       <main className="mx-auto max-w-7xl">
-        <header className="hero-panel shimmer reveal overflow-hidden rounded-[2.5rem] p-6 md:p-8 lg:p-10 backdrop-blur-2xl">
+        <header className="hero-panel reveal overflow-hidden rounded-[1.75rem] p-5 md:p-7 lg:p-8 backdrop-blur-2xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_420px] lg:items-stretch">
             <div className="relative z-10 flex flex-col justify-between">
               <div className="flex flex-wrap items-center gap-3">
-                <p className="chip rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em]">AI Interview Lab</p>
-                <p className="chip rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Executive cockpit</p>
+                <p className="chip rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em]">AI Interview Studio</p>
+                <p className="chip rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Practice desk</p>
                 <p className="chip rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]">Live scoring</p>
               </div>
 
-              <div className="mt-8 max-w-3xl">
-                <p className="panel-kicker text-emerald-200/80">Premium interview simulator</p>
-                <h1 className="mt-4 max-w-2xl font-display text-5xl leading-[0.92] tracking-tight text-white md:text-7xl">
-                  Turn interview practice into a cinematic assessment experience.
+              <div className="mt-7 max-w-3xl">
+                <p className="panel-kicker text-emerald-200/80">Interview practice workspace</p>
+                <h1 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-tight text-white md:text-6xl">
+                  Practice answers, record your delivery, and improve faster.
                 </h1>
                 <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                  Launch role-specific rounds, capture spoken answers, record camera evidence, and review a scorecard that feels like a real hiring dashboard instead of a classroom demo.
+                  Run role-specific rounds with voice input, laptop camera recording, and a clear scorecard that helps you see exactly what to improve next.
                 </p>
               </div>
 
@@ -207,8 +207,8 @@ export default function App() {
                   <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-300">Round mode</p>
                   <p className="mt-2 text-base font-semibold text-white">{difficulty} difficulty</p>
                 </div>
-                <div className="rounded-[1.4rem] border border-purple-500/20 bg-purple-500/8 p-4 backdrop-blur-xl transition hover:border-purple-500/40 hover:bg-purple-500/12">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-purple-300">Session status</p>
+                <div className="rounded-[1.4rem] border border-sky-500/20 bg-sky-500/8 p-4 backdrop-blur-xl transition hover:border-sky-500/40 hover:bg-sky-500/12">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-sky-300">Session status</p>
                   <p className="mt-2 text-base font-semibold text-white">{sessionStatus}</p>
                 </div>
                 <div className="rounded-[1.4rem] border border-emerald-500/20 bg-emerald-500/8 p-4 backdrop-blur-xl transition hover:border-emerald-500/40 hover:bg-emerald-500/12">
@@ -227,11 +227,11 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[1.2rem] border border-orange-500/20 bg-gradient-to-br from-orange-500/10 to-red-500/5 p-4 transition hover:border-orange-500/40 hover:bg-gradient-to-br hover:from-orange-500/15 hover:to-red-500/10">
+                <div className="rounded-[1.2rem] border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-rose-500/5 p-4 transition hover:border-amber-500/40 hover:bg-gradient-to-br hover:from-amber-500/15 hover:to-rose-500/10">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500/20 text-orange-300 font-semibold">02</span>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/20 text-amber-300 font-semibold">02</span>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-orange-300">Record</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-amber-300">Record</p>
                       <p className="mt-1 text-sm text-slate-300">Voice and video evidence</p>
                     </div>
                   </div>
@@ -248,7 +248,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-cyan-500/30 bg-slate-950/80 p-5 text-white shadow-[0_0_40px_rgba(0,217,255,0.15),0_30px_90px_rgba(15,23,42,0.4)] backdrop-blur-xl">
+            <div className="relative overflow-hidden rounded-[1.5rem] border border-cyan-500/25 bg-slate-950/75 p-5 text-white shadow-[0_24px_70px_rgba(15,23,42,0.35)] backdrop-blur-xl">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-orange-400 via-emerald-400 to-cyan-400" />
               <div className="absolute -right-10 top-10 h-48 w-48 rounded-full bg-cyan-400/8 blur-3xl" />
               <div className="absolute -left-8 bottom-0 h-52 w-52 rounded-full bg-orange-400/8 blur-3xl" />
@@ -260,7 +260,7 @@ export default function App() {
                     <h2 className="mt-2 font-display text-2xl text-white">Session snapshot</h2>
                   </div>
                   <div className="rounded-full border border-emerald-400/40 bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
-                    {cameraReady ? "🟢 Camera live" : "⚪ Camera idle"}
+                    {cameraReady ? "Camera live" : "Camera idle"}
                   </div>
                 </div>
 
@@ -289,7 +289,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-[1.4rem] border border-cyan-500/20 bg-gradient-to-br from-cyan-500/12 via-purple-500/8 to-orange-500/5 p-4">
+                <div className="mt-5 rounded-[1.4rem] border border-cyan-500/20 bg-gradient-to-br from-cyan-500/12 via-sky-500/8 to-amber-500/5 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">What this workspace does</p>
                   <p className="mt-2 text-sm leading-6 text-slate-200">
                     It combines prompt generation, answer capture, optional voice input, camera evidence, and AI feedback in one high-end flow.
@@ -357,11 +357,11 @@ export default function App() {
               <div className="mt-4 grid gap-2 text-sm">
                 <div className="mini-box rounded-2xl p-3">
                   <p className="text-slate-400">Recorded video</p>
-                  <p className="mt-1 font-semibold text-white">{hasVideoRecording ? "✓ Yes" : "✗ No"}</p>
+                  <p className="mt-1 font-semibold text-white">{hasVideoRecording ? "Recorded" : "Not yet"}</p>
                 </div>
                 <div className="mini-box rounded-2xl p-3">
                   <p className="text-slate-400">Camera status</p>
-                  <p className="mt-1 font-semibold text-white">{cameraReady ? "🟢 Ready" : "🔴 Unavailable"}</p>
+                  <p className="mt-1 font-semibold text-white">{cameraReady ? "Ready" : "Unavailable"}</p>
                 </div>
                 <div className="mini-box rounded-2xl p-3">
                   <p className="text-slate-400">Best score</p>
@@ -442,7 +442,7 @@ export default function App() {
                     </div>
                     <div className="rounded-2xl border border-purple-500/20 bg-purple-500/8 p-4">
                       <p className="text-xs uppercase tracking-[0.18em] text-purple-400">Submission state</p>
-                      <p className="mt-2 text-lg font-semibold text-white">{canSubmit ? "✓ Ready" : "✏ Draft required"}</p>
+                      <p className="mt-2 text-lg font-semibold text-white">{canSubmit ? "Ready" : "Draft required"}</p>
                     </div>
                   </div>
 
@@ -513,10 +513,10 @@ export default function App() {
                   </div>
 
                   <div className="rounded-[1.5rem] border border-purple-500/20 bg-slate-900/60 p-5 shadow-md">
-                    <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="mb-3 flex items-start justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.2em] text-purple-400">Camera evidence</p>
-                        <p className="mt-1 text-sm text-slate-300">Optional video adds facial confidence analysis.</p>
+                        <p className="mt-1 text-sm text-slate-300">Laptop camera recording is used for facial confidence analysis.</p>
                       </div>
                       <button
                         type="button"
@@ -531,6 +531,17 @@ export default function App() {
                       >
                         {isRecording ? "Stop Recording" : cameraReady ? "Start Recording" : "Camera Unavailable"}
                       </button>
+                    </div>
+
+                    <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+                      <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-3 py-2">
+                        <p className="text-slate-400">Source</p>
+                        <p className="mt-1 font-semibold text-cyan-100">Laptop preferred</p>
+                      </div>
+                      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
+                        <p className="text-slate-400">Recording</p>
+                        <p className="mt-1 font-semibold text-emerald-100">{hasVideoRecording ? "Saved" : isRecording ? "In progress" : "Ready"}</p>
+                      </div>
                     </div>
 
                     {!cameraReady && cameraStatusMessage ? (
