@@ -159,12 +159,26 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen px-4 py-6 md:px-8 relative">
+    <div className="min-h-screen px-4 py-5 md:px-8 relative">
       <div id="particles-bg" className="particles" />
       <div className="grid-overlay" />
       <div className="ambient-glow" />
 
       <main className="mx-auto max-w-7xl">
+        <nav className="topbar reveal mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="brand-mark">AI</div>
+            <div>
+              <p className="text-sm font-semibold text-white">Interview Simulator</p>
+              <p className="text-xs text-slate-400">Practice workspace</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="status-token">{cameraReady ? "Camera ready" : "Camera pending"}</span>
+            <span className="status-token status-token-warm">{sessionStatus}</span>
+          </div>
+        </nav>
+
         <header className="hero-panel reveal overflow-hidden rounded-[1.75rem] p-5 md:p-7 lg:p-8 backdrop-blur-2xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_420px] lg:items-stretch">
             <div className="relative z-10 flex flex-col justify-between">
@@ -203,16 +217,16 @@ export default function App() {
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[1.4rem] border border-cyan-500/20 bg-cyan-500/8 p-4 backdrop-blur-xl transition hover:border-cyan-500/40 hover:bg-cyan-500/12">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-300">Round mode</p>
+                <div className="metric-tile rounded-[1.4rem] p-4 backdrop-blur-xl">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-teal-200">Round mode</p>
                   <p className="mt-2 text-base font-semibold text-white">{difficulty} difficulty</p>
                 </div>
-                <div className="rounded-[1.4rem] border border-sky-500/20 bg-sky-500/8 p-4 backdrop-blur-xl transition hover:border-sky-500/40 hover:bg-sky-500/12">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-sky-300">Session status</p>
+                <div className="metric-tile metric-tile-warm rounded-[1.4rem] p-4 backdrop-blur-xl">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-amber-200">Session status</p>
                   <p className="mt-2 text-base font-semibold text-white">{sessionStatus}</p>
                 </div>
-                <div className="rounded-[1.4rem] border border-emerald-500/20 bg-emerald-500/8 p-4 backdrop-blur-xl transition hover:border-emerald-500/40 hover:bg-emerald-500/12">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-300">Completion</p>
+                <div className="metric-tile metric-tile-coral rounded-[1.4rem] p-4 backdrop-blur-xl">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-rose-200">Completion</p>
                   <p className="mt-2 text-base font-semibold text-white">{history.length} rounds</p>
                 </div>
               </div>
@@ -249,7 +263,7 @@ export default function App() {
             </div>
 
             <div className="relative overflow-hidden rounded-[1.5rem] border border-cyan-500/25 bg-slate-950/75 p-5 text-white shadow-[0_24px_70px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-orange-400 via-emerald-400 to-cyan-400" />
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-400 via-amber-300 to-teal-300" />
               <div className="absolute -right-10 top-10 h-48 w-48 rounded-full bg-cyan-400/8 blur-3xl" />
               <div className="absolute -left-8 bottom-0 h-52 w-52 rounded-full bg-orange-400/8 blur-3xl" />
 
@@ -289,8 +303,8 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-[1.4rem] border border-cyan-500/20 bg-gradient-to-br from-cyan-500/12 via-sky-500/8 to-amber-500/5 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">What this workspace does</p>
+                <div className="mt-5 rounded-[1.4rem] border border-amber-300/20 bg-gradient-to-br from-amber-300/12 via-teal-400/8 to-rose-400/5 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-amber-200">What this workspace does</p>
                   <p className="mt-2 text-sm leading-6 text-slate-200">
                     It combines prompt generation, answer capture, optional voice input, camera evidence, and AI feedback in one high-end flow.
                   </p>
@@ -353,6 +367,27 @@ export default function App() {
             </div>
 
             <div className="job-card rounded-[1.75rem] p-5">
+              <p className="panel-kicker">Session history</p>
+              <div className="mt-4 space-y-3">
+                {sessionReviews.length ? (
+                  sessionReviews.slice(-3).map((review, index) => (
+                    <div key={`${review.question}-${index}`} className="history-row rounded-2xl p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="truncate text-sm font-semibold text-white">Round {sessionReviews.length - sessionReviews.slice(-3).length + index + 1}</p>
+                        <span className="rounded-full bg-amber-300/15 px-2 py-1 text-xs font-semibold text-amber-100">{review.overallScore}</span>
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{review.question}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="history-row rounded-2xl p-3 text-sm leading-6 text-slate-300">
+                    Completed rounds will appear here with quick score snapshots.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="job-card rounded-[1.75rem] p-5">
               <p className="panel-kicker">Live signals</p>
               <div className="mt-4 grid gap-2 text-sm">
                 <div className="mini-box rounded-2xl p-3">
@@ -374,7 +409,7 @@ export default function App() {
           <div className="space-y-5 reveal" style={{ animationDelay: "180ms" }}>
             <section className="surface-panel rounded-[2rem] p-5 md:p-6 lg:p-7">
               <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="rounded-[1.5rem] border border-cyan-500/20 bg-gradient-to-br from-slate-900 to-slate-800 p-5 shadow-md">
+                <div className="control-card rounded-[1.5rem] p-5 shadow-md">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <p className="text-xs uppercase tracking-[0.2em] text-cyan-400">Interview setup</p>
@@ -433,21 +468,21 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="rounded-[1.5rem] border border-cyan-500/20 bg-slate-900/80 p-5 text-white shadow-[0_0_30px_rgba(0,217,255,0.1),0_16px_48px_rgba(15,23,42,0.3)]">
-                  <p className="text-xs uppercase tracking-[0.22em] text-cyan-400">Assessment preview</p>
+                <div className="control-card rounded-[1.5rem] p-5 text-white shadow-[0_16px_48px_rgba(15,23,42,0.3)]">
+                  <p className="text-xs uppercase tracking-[0.22em] text-amber-200">Assessment preview</p>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/8 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-cyan-400">Session status</p>
+                    <div className="metric-tile rounded-2xl p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-teal-200">Session status</p>
                       <p className="mt-2 text-lg font-semibold text-white">{sessionStatus}</p>
                     </div>
-                    <div className="rounded-2xl border border-purple-500/20 bg-purple-500/8 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-purple-400">Submission state</p>
+                    <div className="metric-tile metric-tile-coral rounded-2xl p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-rose-200">Submission state</p>
                       <p className="mt-2 text-lg font-semibold text-white">{canSubmit ? "Ready" : "Draft required"}</p>
                     </div>
                   </div>
 
-                  <div className="mt-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/12 to-cyan-500/8 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">What this workspace does</p>
+                  <div className="mt-4 rounded-2xl border border-teal-300/20 bg-gradient-to-br from-teal-300/12 to-amber-300/8 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-teal-200">What this workspace does</p>
                     <p className="mt-2 text-sm leading-6 text-slate-200">
                       It combines prompt generation, answer capture, optional voice input, camera evidence, and AI feedback in one polished flow.
                     </p>

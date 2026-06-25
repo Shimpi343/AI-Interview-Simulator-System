@@ -65,9 +65,9 @@ export default function VoiceInputButton({ onTranscript, currentText = "" }) {
     <button
       type="button"
       onClick={start}
-      className="inline-flex items-center gap-2 rounded-full border border-transparent bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-slate-800"
+      className="inline-flex items-center gap-2 rounded-full border border-teal-300/30 bg-teal-300/10 px-4 py-2 text-sm font-semibold text-teal-50 shadow-[0_14px_28px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-teal-300/15"
     >
-      <span className="h-2 w-2 rounded-full bg-emerald-400" />
+      <span className="h-2 w-2 rounded-full bg-amber-300" />
       Start Voice Input
     </button>
   );
