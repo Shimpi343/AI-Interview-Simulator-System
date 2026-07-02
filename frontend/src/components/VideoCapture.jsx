@@ -278,12 +278,12 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
   return (
     <div className="space-y-4">
       {permissionError && (
-        <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
+        <p className="notice text-xs">
           {permissionError}
         </p>
       )}
       {recordingStatus !== "saved" && (
-        <div className="overflow-hidden rounded-[1.5rem] border border-cyan-400/25 bg-slate-950 shadow-[0_18px_40px_rgba(15,23,42,0.25)]">
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-950 shadow-sm">
           <video
             ref={videoRef}
             autoPlay
@@ -293,14 +293,14 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
             style={{ maxHeight: "240px" }}
           />
           <canvas ref={canvasRef} width={320} height={240} className="hidden" />
-          <div className="flex items-center justify-between border-t border-white/10 bg-white/5 px-3 py-2 text-[11px] text-slate-300">
-            <span className="uppercase tracking-[0.2em]">Live capture</span>
+          <div className="flex items-center justify-between border-t border-white/10 bg-slate-900 px-3 py-2 text-[11px] text-slate-300">
+            <span className="font-bold uppercase tracking-[0.16em]">Live capture</span>
             <span>{cameraActive ? "Camera ready" : "Awaiting permission"}</span>
           </div>
           {cameraActive ? (
-            <div className="border-t border-white/10 bg-slate-900/80 px-3 py-2 text-[11px] text-slate-300">
+            <div className="border-t border-white/10 bg-slate-900 px-3 py-2 text-[11px] text-slate-300">
               <p className="truncate">
-                Active camera: <span className="font-semibold text-cyan-200">{selectedCameraLabel || "Laptop camera"}</span>
+                Active camera: <span className="font-semibold text-white">{selectedCameraLabel || "Laptop camera"}</span>
               </p>
               {cameraCount > 1 ? (
                 <p className="mt-1 text-slate-500">Laptop camera is preferred automatically when multiple cameras are connected.</p>
@@ -310,29 +310,29 @@ export default function VideoCapture({ onFramesCapture, isRecording, onVideoReco
         </div>
       )}
       {recordingStatus === "recording" && (
-        <div className="flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">
+        <div className="flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-bold text-red-700">
           <div className="flex h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
           <span>Recording video...</span>
         </div>
       )}
       {recordingStatus === "saved" && playbackUrl && (
-        <div className="space-y-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Your recording</p>
+        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">Your recording</p>
           <video
             key={playbackUrl}
             src={playbackUrl}
             controls
             controlsList="nodownload"
-            className="w-full overflow-hidden rounded-[1.25rem] border border-slate-200 bg-slate-950"
+            className="w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-950"
             style={{ maxHeight: "240px", display: "block" }}
             onError={(e) => console.error("[VC] Video error:", e)}
           />
           <button
             type="button"
             onClick={handleClearRecording}
-            className="btn-secondary rounded-full px-3 py-2 text-xs font-semibold transition"
+            className="btn-secondary text-xs"
           >
-            Clear Recording & Re-record
+            Re-record
           </button>
         </div>
       )}

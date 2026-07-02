@@ -12,7 +12,7 @@ export default function VoiceInputButton({ onTranscript, currentText = "" }) {
       return;
     }
 
-    finalTranscriptRef.current = currentText; // Initialize with current text
+    finalTranscriptRef.current = currentText;
     const rec = new SpeechRecognition();
     rec.lang = "en-US";
     rec.interimResults = true;
@@ -20,20 +20,16 @@ export default function VoiceInputButton({ onTranscript, currentText = "" }) {
 
     rec.onresult = (event) => {
       let interimText = "";
-      
-      // Collect all transcripts from resultIndex onwards, marking finals
+
       for (let i = event.resultIndex; i < event.results.length; i += 1) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
-          // Final result - add to accumulated transcript with space
           finalTranscriptRef.current += (finalTranscriptRef.current ? " " : "") + transcript;
         } else {
-          // Interim result - show as preview but don't add to final yet
           interimText += transcript;
         }
       }
 
-      // Send the full accumulated transcript + any interim text being typed
       const fullText = finalTranscriptRef.current + (interimText ? " " + interimText : "");
       onTranscript(fullText.trim());
     };
@@ -56,19 +52,19 @@ export default function VoiceInputButton({ onTranscript, currentText = "" }) {
     <button
       type="button"
       onClick={stop}
-      className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(244,63,94,0.25)] transition hover:bg-rose-400"
+      className="btn-danger gap-2"
     >
       <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
-      Stop Voice Input
+      Stop voice
     </button>
   ) : (
     <button
       type="button"
       onClick={start}
-      className="inline-flex items-center gap-2 rounded-full border border-teal-300/30 bg-teal-300/10 px-4 py-2 text-sm font-semibold text-teal-50 shadow-[0_14px_28px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-teal-300/15"
+      className="btn-secondary gap-2"
     >
       <span className="h-2 w-2 rounded-full bg-amber-300" />
-      Start Voice Input
+      Voice input
     </button>
   );
 }
