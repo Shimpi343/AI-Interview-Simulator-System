@@ -114,7 +114,7 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
 
   return (
     <section className="score-section">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="score-header">
         <div>
           <span className="eyebrow">Assessment summary</span>
           <h3 className="mt-2 text-2xl font-extrabold text-slate-950">AI feedback</h3>
@@ -122,20 +122,20 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
             A concise review across answer quality, grammar, technical depth, and on-camera confidence.
           </p>
         </div>
-        <div className="rounded-lg bg-slate-950 px-4 py-3 text-right text-white">
+        <div className="score-badge">
           <span className="block text-xs font-bold uppercase tracking-wide text-slate-300">Overall</span>
           <strong className="text-3xl leading-none">{overallScore}</strong>
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
         <ScoreBar label="Confidence" value={feedback.scores.confidence} />
         <ScoreBar label="Grammar" value={feedback.scores.grammar} />
         <ScoreBar label="Technical" value={feedback.scores.technical} />
         <ScoreBar label="Facial confidence" value={feedback.scores.facial_confidence} />
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <div className="review-card">
           <span className="eyebrow">Highlights</span>
           <ul>
@@ -155,55 +155,61 @@ export default function ScoreCard({ feedback, originalAnswer = "" }) {
         </div>
       </div>
 
-      {feedback.grammar_issues?.length ? (
-        <div className="mt-4 space-y-3">
-          <span className="eyebrow">Grammar fixes</span>
-          {feedback.grammar_issues.map((issue, idx) => (
-            <div key={idx} className="review-card">
-              <p><strong className="text-slate-950">Excerpt:</strong> {issue.excerpt}</p>
-              <p className="mt-2"><strong className="text-red-700">Problem:</strong> {issue.problem}</p>
-              <p className="mt-2"><strong className="text-green-700">Fix:</strong> {issue.correction}</p>
+      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        {feedback.grammar_issues?.length ? (
+          <details className="review-toggle" open={false}>
+            <summary>Grammar fixes</summary>
+            <div className="mt-3 space-y-3">
+              {feedback.grammar_issues.map((issue, idx) => (
+                <div key={idx} className="review-card review-card-soft">
+                  <p><strong className="text-slate-950">Excerpt:</strong> {issue.excerpt}</p>
+                  <p className="mt-2"><strong className="text-red-700">Problem:</strong> {issue.problem}</p>
+                  <p className="mt-2"><strong className="text-green-700">Fix:</strong> {issue.correction}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      ) : null}
+          </details>
+        ) : null}
 
-      {feedback.sentence_corrections?.length ? (
-        <div className="mt-4 space-y-3">
-          <span className="eyebrow">Sentence corrections</span>
-          {feedback.sentence_corrections.map((item, idx) => (
-            <DiffRow key={idx} index={idx} original={item.original} corrected={item.corrected} note={item.note} />
-          ))}
-        </div>
-      ) : null}
+        {feedback.sentence_corrections?.length ? (
+          <details className="review-toggle">
+            <summary>Sentence corrections</summary>
+            <div className="mt-3 space-y-3">
+              {feedback.sentence_corrections.map((item, idx) => (
+                <DiffRow key={idx} index={idx} original={item.original} corrected={item.corrected} note={item.note} />
+              ))}
+            </div>
+          </details>
+        ) : null}
 
-      {feedback.corrected_answer ? (
-        <div className="review-card mt-4">
-          <span className="eyebrow">Corrected answer</span>
-          <p className="mt-2 whitespace-pre-wrap">{feedback.corrected_answer}</p>
-        </div>
-      ) : null}
+        {feedback.corrected_answer ? (
+          <details className="review-toggle">
+            <summary>Corrected answer</summary>
+            <p className="mt-3 whitespace-pre-wrap text-slate-700">{feedback.corrected_answer}</p>
+          </details>
+        ) : null}
 
-      {feedback.real_world_answer ? (
-        <div className="review-card mt-4">
-          <span className="eyebrow">Reference answer</span>
-          <p className="mt-2 whitespace-pre-wrap">{feedback.real_world_answer}</p>
-        </div>
-      ) : null}
+        {feedback.real_world_answer ? (
+          <details className="review-toggle">
+            <summary>Reference answer</summary>
+            <p className="mt-3 whitespace-pre-wrap text-slate-700">{feedback.real_world_answer}</p>
+          </details>
+        ) : null}
 
-      {originalAnswer ? (
-        <div className="review-card mt-4">
-          <span className="eyebrow">Your original answer</span>
-          <p className="mt-2 whitespace-pre-wrap">{originalAnswer}</p>
-        </div>
-      ) : null}
+        {originalAnswer ? (
+          <details className="review-toggle">
+            <summary>Your original answer</summary>
+            <p className="mt-3 whitespace-pre-wrap text-slate-700">{originalAnswer}</p>
+          </details>
+        ) : null}
 
-      {feedback.sample_better_answer ? (
-        <div className="review-card mt-4">
-          <span className="eyebrow">Stronger STAR answer</span>
-          <p className="mt-2">{feedback.sample_better_answer}</p>
-        </div>
-      ) : null}
+        {feedback.sample_better_answer ? (
+          <details className="review-toggle">
+            <summary>Stronger STAR answer</summary>
+            <p className="mt-3 text-slate-700">{feedback.sample_better_answer}</p>
+          </details>
+        ) : null}
+      </div>
     </section>
   );
 }
