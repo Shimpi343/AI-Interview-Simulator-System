@@ -5,6 +5,16 @@ import VideoCapture from "./components/VideoCapture";
 import AIAvatar from "./components/AIAvatar";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const ROLE_PRESETS = [
+  "Frontend Developer",
+  "Backend Engineer",
+  "Full Stack Developer",
+  "DevOps Engineer",
+  "QA Automation Engineer",
+  "Data Analyst",
+  "ML Engineer",
+  "Product Manager",
+];
 
 function getOverallScore(scores) {
   if (!scores) return 0;
@@ -209,6 +219,29 @@ export default function App() {
                   placeholder="Ex: Backend Engineer"
                 />
               </label>
+
+              <div className="form-field">
+                <span>Popular interview fields</span>
+                <div className="flex flex-wrap gap-2">
+                  {ROLE_PRESETS.map((preset) => {
+                    const active = role.toLowerCase() === preset.toLowerCase();
+                    return (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setRole(preset)}
+                        disabled={questionCount > 0}
+                        className={active ? "btn-primary text-sm" : "btn-secondary text-sm"}
+                      >
+                        {preset}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Pick a common interview track or type any custom role above.
+                </p>
+              </div>
 
               <label className="form-field">
                 <span>Difficulty</span>
