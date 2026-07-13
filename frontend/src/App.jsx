@@ -173,6 +173,10 @@ export default function App() {
             <p>
               A focused interview workspace with role presets, guided response writing, camera review, and compact feedback that keeps you moving.
             </p>
+            <div className="hero-meta">
+              <span className="status-chip">{sessionStatus}</span>
+              <span className="status-chip status-chip-subtle">Round {questionCount || 0}</span>
+            </div>
             <div className="hero-actions">
               <button type="button" onClick={fetchQuestion} disabled={loadingQuestion} className="btn-primary">
                 {loadingQuestion ? "Preparing round..." : questionCount ? "Generate next prompt" : "Start interview"}
@@ -188,6 +192,7 @@ export default function App() {
               <div>
                 <span className="eyebrow">Live readiness</span>
                 <h2>{progressValue}%</h2>
+                <p className="hero-insight-copy">{sessionStatus}</p>
               </div>
               <AIAvatar isActive={!!question} score={latestOverallScore} />
             </div>
