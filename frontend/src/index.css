@@ -30,6 +30,10 @@ body {
     linear-gradient(180deg, #f6f2eb 0%, #edf2f7 42%, #f8fafc 100%);
 }
 
+.app-shell {
+  position: relative;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -132,6 +136,10 @@ button {
   padding: clamp(1.25rem, 3vw, 2.2rem);
 }
 
+.hero-copy-compact {
+  min-height: 100%;
+}
+
 .hero-copy h1 {
   max-width: 760px;
   margin: 0.85rem 0 0;
@@ -183,6 +191,80 @@ button {
   z-index: 1;
   border-radius: 14px;
   padding: 0.95rem;
+}
+
+.sticky-panel {
+  position: sticky;
+  top: 1rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.setup-rail {
+  min-width: 0;
+}
+
+.setup-panel {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.workspace-stack {
+  min-width: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.workbench-modern {
+  padding: 1rem;
+}
+
+.compact-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.stats-shell {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.panel-inner-soft {
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.9);
+  padding: 0.9rem;
+}
+
+.panel-summary {
+  cursor: pointer;
+  list-style: none;
+  color: #172033;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.panel-summary::-webkit-details-marker {
+  display: none;
+}
+
+.role-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timeline-tight {
+  gap: 0.5rem;
+}
+
+.round-grid {
+  display: grid;
+  gap: 1rem;
 }
 
 .panel-head {
@@ -573,6 +655,14 @@ button {
   line-height: 1.7;
 }
 
+.score-section {
+  margin-top: 0.25rem;
+}
+
+.score-section .review-toggle {
+  background: rgba(255, 255, 255, 0.92);
+}
+
 .avatar-frame {
   width: 132px;
   min-width: 132px;
@@ -581,6 +671,16 @@ button {
 @media (min-width: 1024px) {
   .hero-shell {
     grid-template-columns: minmax(0, 1fr) 390px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 360px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .round-grid {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
   }
 }
 
@@ -605,5 +705,9 @@ button {
 
   .hero-copy h1 {
     font-size: 2.25rem;
+  }
+
+  .stats-shell {
+    grid-template-columns: 1fr;
   }
 }

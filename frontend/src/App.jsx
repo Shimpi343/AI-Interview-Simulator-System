@@ -66,6 +66,7 @@ export default function App() {
     return Math.max(...sessionReviews.map((review) => review.overallScore));
   }, [sessionReviews]);
   const sessionStatus = feedback ? "Review complete" : question ? "Answer in progress" : "Ready to begin";
+  const sessionMilestone = question ? "Live round active" : "Ready for a new round";
 
   const fetchQuestion = async () => {
     setError("");
@@ -149,9 +150,9 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen">
-      <main className="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 py-4 sm:px-6 lg:px-8">
-        <nav className="premium-nav">
+    <div className="min-h-screen app-shell">
+      <main className="mx-auto flex max-w-[1520px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <header className="premium-nav">
           <div className="flex items-center gap-3">
             <div className="brand-mark">IS</div>
             <div>
@@ -161,23 +162,23 @@ export default function App() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="status-pill">{cameraReady ? "Camera ready" : "Camera pending"}</span>
-            <span className="status-pill status-pill-dark">{sessionStatus}</span>
+            <span className="status-pill status-pill-dark">{sessionMilestone}</span>
           </div>
-        </nav>
+        </header>
 
         <section className="hero-shell">
-          <div className="hero-copy">
-            <span className="eyebrow">Premium interview rehearsal</span>
-            <h1>Sharpen every answer before the real call.</h1>
+          <div className="hero-copy hero-copy-compact">
+            <span className="eyebrow">Interview cockpit</span>
+            <h1>Practice smarter, answer cleaner, and review faster.</h1>
             <p>
-              Practice with role-specific prompts, voice capture, camera review, and a precise scorecard that shows what to improve next.
+              A focused interview workspace with role presets, guided response writing, camera review, and compact feedback that keeps you moving.
             </p>
             <div className="hero-actions">
               <button type="button" onClick={fetchQuestion} disabled={loadingQuestion} className="btn-primary">
                 {loadingQuestion ? "Preparing round..." : questionCount ? "Generate next prompt" : "Start interview"}
               </button>
               <button type="button" onClick={resetSession} className="btn-secondary">
-                Reset
+                Reset session
               </button>
             </div>
           </div>
@@ -193,7 +194,7 @@ export default function App() {
             <div className="progress-track">
               <div style={{ width: `${progressValue}%` }} />
             </div>
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-3">
               <Stat label="Average" value={averageSessionScore || "--"} tone="sage" />
               <Stat label="Best" value={bestSessionScore || "--"} tone="gold" />
               <Stat label="Rounds" value={history.length} tone="slate" />
@@ -202,9 +203,9 @@ export default function App() {
           </div>
         </section>
 
-        <section className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-          <aside className="space-y-5">
-            <div className="panel">
+        <section className="dashboard-grid">
+          <aside className="setup-rail">
+            <div className="panel setup-panel sticky-panel">
               <div className="panel-head">
                 <span className="eyebrow">Session setup</span>
                 <h2>{role}</h2>
@@ -222,7 +223,7 @@ export default function App() {
 
               <div className="form-field">
                 <span>Popular interview fields</span>
-                <div className="flex flex-wrap gap-2">
+                <div className="role-chip-grid">
                   {ROLE_PRESETS.map((preset) => {
                     const active = role.toLowerCase() === preset.toLowerCase();
                     return (
@@ -243,59 +244,58 @@ export default function App() {
                 </p>
               </div>
 
-              <label className="form-field">
-                <span>Difficulty</span>
-                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} disabled={questionCount > 0}>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </label>
+              <div className="compact-grid">
+                <label className="form-field">
+                  <span>Difficulty</span>
+                  <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} disabled={questionCount > 0}>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </label>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <Stat label="Question" value={questionCount || 0} />
-                <Stat label="Video" value={hasVideoRecording ? "Saved" : "Open"} tone="sage" />
+                <div className="stats-shell">
+                  <Stat label="Question" value={questionCount || 0} />
+                  <Stat label="Video" value={hasVideoRecording ? "Saved" : "Open"} tone="sage" />
+                </div>
               </div>
-            </div>
 
-            <div className="panel">
-              <div className="panel-head">
-                <span className="eyebrow">Workflow</span>
-                <h2>Round progress</h2>
+              <div className="panel-inner-soft">
+                <div className="panel-head">
+                  <span className="eyebrow">Workflow</span>
+                  <h2>Round progress</h2>
+                </div>
+                <div className="timeline timeline-tight">
+                  <div className={questionCount > 0 ? "active" : ""}>Setup locked</div>
+                  <div className={question ? "active" : ""}>Prompt issued</div>
+                  <div className={answer.trim() ? "active" : ""}>Response drafted</div>
+                  <div className={feedback ? "active" : ""}>Review delivered</div>
+                </div>
               </div>
-              <div className="timeline">
-                <div className={questionCount > 0 ? "active" : ""}>Setup locked</div>
-                <div className={question ? "active" : ""}>Prompt issued</div>
-                <div className={answer.trim() ? "active" : ""}>Response drafted</div>
-                <div className={feedback ? "active" : ""}>Review delivered</div>
-              </div>
-            </div>
 
-            <div className="panel">
-              <div className="panel-head">
-                <span className="eyebrow">Recent rounds</span>
-                <h2>Session record</h2>
-              </div>
-              <div className="space-y-3">
-                {sessionReviews.length ? (
-                  sessionReviews.slice(-3).map((review, index) => (
-                    <div key={`${review.question}-${index}`} className="history-item">
-                      <div>
-                        <strong>Round {sessionReviews.length - sessionReviews.slice(-3).length + index + 1}</strong>
-                        <p>{review.question}</p>
+              <details className="panel-inner-soft">
+                <summary className="panel-summary">Recent rounds</summary>
+                <div className="mt-3 space-y-3">
+                  {sessionReviews.length ? (
+                    sessionReviews.slice(-3).map((review, index) => (
+                      <div key={`${review.question}-${index}`} className="history-item">
+                        <div>
+                          <strong>Round {sessionReviews.length - sessionReviews.slice(-3).length + index + 1}</strong>
+                          <p>{review.question}</p>
+                        </div>
+                        <span>{review.overallScore}</span>
                       </div>
-                      <span>{review.overallScore}</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="empty-state">Completed rounds will appear here with score snapshots.</p>
-                )}
-              </div>
+                    ))
+                  ) : (
+                    <p className="empty-state">Completed rounds will appear here with score snapshots.</p>
+                  )}
+                </div>
+              </details>
             </div>
           </aside>
 
-          <div className="space-y-5">
-            <section className="panel workbench">
+          <section className="workspace-stack">
+            <section className="panel workbench workbench-modern">
               <div className="workbench-header">
                 <div>
                   <span className="eyebrow">Current round</span>
@@ -322,7 +322,7 @@ export default function App() {
               </div>
 
               {!feedback && question ? (
-                <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="round-grid">
                   <div className="answer-panel">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
@@ -334,7 +334,7 @@ export default function App() {
                     <textarea
                       value={answer}
                       onChange={(e) => setAnswer(e.target.value)}
-                      rows={10}
+                      rows={9}
                       placeholder="Write a clear interview answer with context, actions, and measurable outcomes."
                     />
                     <div className="mt-4 flex flex-wrap gap-3">
@@ -383,9 +383,9 @@ export default function App() {
               ) : null}
 
               {feedback ? (
-                <div className="mt-5">
+                <div className="mt-5 space-y-4">
                   <ScoreCard feedback={feedback} originalAnswer={answer} />
-                  <div className="mt-5 flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3">
                     <button type="button" onClick={fetchQuestion} disabled={loadingQuestion} className="btn-primary">
                       {loadingQuestion ? "Loading..." : "Next round"}
                     </button>
@@ -398,7 +398,7 @@ export default function App() {
 
               {error ? <p className="error-banner">{error}</p> : null}
             </section>
-          </div>
+          </section>
         </section>
       </main>
     </div>
