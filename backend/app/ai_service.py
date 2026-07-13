@@ -277,66 +277,128 @@ def _is_relevant_real_world_answer(question: str, answer: str) -> bool:
     return overlap >= 1
 
 
-def _fallback_real_world_answer(role: str, question: str) -> str:
+def _question_type_and_answer_guidance(question: str) -> tuple[str, str]:
+    q = question.lower()
+
+    if any(token in q for token in ["introduce yourself", "about yourself", "tell me about yourself", "background", "experience"]):
+        return (
+            "self-introduction / background",
+            "Give a short current-role summary, connect it to the role, include one measurable result, and explain why the position matters to you.",
+        )
+
+    if any(token in q for token in ["architecture", "design", "scalable", "scale", "system design", "microservices"]):
+        return (
+            "system design / architecture",
+            "Start with requirements, then explain the components, trade-offs, scaling strategy, and observability choices.",
+        )
+
+    if any(token in q for token in ["incident", "outage", "production", "downtime", "debug", "troubleshoot", "monitoring"]):
+        return (
+            "incident response / troubleshooting",
+            "Describe how you stabilize the issue first, how you investigate, what you changed, and the measurable result after the fix.",
+        )
+
+    if any(token in q for token in ["performance", "latency", "slow", "optimize", "bottleneck"]):
+        return (
+            "performance optimization",
+            "Explain how you find the bottleneck, what you changed, and what metric improved after the optimization.",
+        )
+
+    if any(token in q for token in ["testing", "quality", "qa", "bug", "defect", "test strategy"]):
+        return (
+            "testing / quality",
+            "Walk through your testing layers, what you covered first, how you reduced risk, and how quality improved.",
+        )
+
+    if any(token in q for token in ["stakeholder", "conflict", "team", "cross-functional", "communicate", "leadership", "disagree"]):
+        return (
+            "collaboration / leadership",
+            "Explain the situation, how you aligned people, the decision you drove, and the business outcome.",
+        )
+
+    if any(token in q for token in ["learn", "growth", "technology", "improve", "new skill", "challenge", "difficult"]):
+        return (
+            "learning / growth",
+            "Show how you approach unfamiliar work, what you did to learn, and the result of that learning.",
+        )
+
+    if any(token in q for token in ["prioritize", "trade-off", "deadline", "constraint", "scope", "velocity"]):
+        return (
+            "prioritization / trade-off",
+            "Explain how you evaluated the options, which constraints mattered most, and why your choice was the best one.",
+        )
+
+    if any(token in q for token in ["code quality", "maintainability", "refactor", "clean code", "best practice"]):
+        return (
+            "code quality / best practices",
+            "Describe the standards you use, how they help the team, and one concrete example of improving the codebase.",
+        )
+
+    return (
+        "general interview question",
+        "Answer directly, explain your reasoning, include one concrete example, and finish with the impact or result.",
+    )
+
+
+def _reference_answer_prefix(question: str) -> str:
+    question_type, guidance = _question_type_and_answer_guidance(question)
+    return f"Question type: {question_type}. How to answer: {guidance}"
+
+
+def _reference_answer_body(role: str, question: str) -> str:
     q = question.lower()
     role_lower = role.lower()
 
-    # Self-introduction and background questions
     if any(token in q for token in ["introduce yourself", "about yourself", "tell me about yourself", "background", "experience"]):
         if "frontend" in role_lower:
-            return "I'm a Frontend Developer with 5+ years building performant, accessible user interfaces. Recently, I led a redesign project that improved core web vitals scores—reducing FCP by 2.1s and achieving 94 Lighthouse performance. I partnered with backend and design teams to ship a responsive component library used across 8 product surfaces, which cut development time by 30% and reduced CSS bugs by 45%. I'm drawn to roles where I can combine React expertise with UX thoughtfulness and mentoring junior engineers."
-        elif "backend" in role_lower:
-            return "I'm a Backend Engineer with 6+ years designing and maintaining production systems at scale. I specialize in building APIs and services that reliably handle millions of requests daily while keeping latency predictable. At my last role, I owned a critical payment processing service handling $2.5B annually and implemented a disaster recovery plan that cut RTO from 4 hours to 12 minutes. I'm passionate about observability, graceful degradation, and writing code that's easy for future me (and teammates) to understand."
-        elif "devops" in role_lower or "infrastructure" in role_lower:
-            return "I'm a DevOps/Infrastructure Engineer with 4+ years optimizing deployment pipelines, cloud infrastructure, and incident response. I've automated deployment processes to reduce time-to-production from 45 minutes to 6 minutes and implemented IaC practices that cut infrastructure costs by 28% while improving reliability. I built monitoring and alerting systems that reduced MTTR from 90 minutes to 12 minutes, and I'm skilled across Kubernetes, Terraform, and AWS. I'm excited to work on systems that scale reliably."
-        else:
-            return f"I'm a {role} with practical experience delivering end-to-end solutions. I've worked on projects that directly impacted business metrics, always focusing on measurable outcomes and code quality. I'm experienced collaborating with cross-functional teams, mentoring colleagues, and learning new technologies quickly. I'm looking for a role where I can contribute at scale while continuing to grow as an engineer."
+            return "I'm a Frontend Developer with 5+ years building performant, accessible user interfaces. Recently, I led a redesign project that improved core web vitals scores, reduced FCP by 2.1s, and achieved a 94 Lighthouse performance score. I partnered with backend and design teams to ship a responsive component library used across eight product surfaces, which cut development time by 30% and reduced CSS bugs by 45%. I'm drawn to roles where I can combine React expertise with UX thoughtfulness and mentoring junior engineers."
+        if "backend" in role_lower:
+            return "I'm a Backend Engineer with 6+ years designing and maintaining production systems at scale. I specialize in building APIs and services that reliably handle millions of requests daily while keeping latency predictable. At my last role, I owned a critical payment processing service handling $2.5B annually and implemented a disaster recovery plan that cut RTO from 4 hours to 12 minutes. I'm passionate about observability, graceful degradation, and writing code that's easy for future me and teammates to understand."
+        if "devops" in role_lower or "infrastructure" in role_lower:
+            return "I'm a DevOps and Infrastructure Engineer with 4+ years optimizing deployment pipelines, cloud infrastructure, and incident response. I've automated deployment processes to reduce time-to-production from 45 minutes to 6 minutes and implemented infrastructure-as-code practices that cut infrastructure costs by 28% while improving reliability. I built monitoring and alerting systems that reduced MTTR from 90 minutes to 12 minutes, and I'm skilled across Kubernetes, Terraform, and AWS. I'm excited to work on systems that scale reliably."
+        return f"I'm a {role} with practical experience delivering end-to-end solutions. I've worked on projects that directly impacted business metrics, always focusing on measurable outcomes and code quality. I'm experienced collaborating with cross-functional teams, mentoring colleagues, and learning new technologies quickly. I'm looking for a role where I can contribute at scale while continuing to grow as an engineer."
 
-    # Architecture and design questions
     if any(token in q for token in ["architecture", "design", "scalable", "scale", "system design", "microservices"]):
         if "distributed" in q or "scale" in q:
-            return "I'd architect this with independent microservices behind an API gateway, with stateless compute to enable horizontal scaling. For the data layer, I'd use sharding if needed and a managed database for transactional consistency. I'd implement Redis for caching hot paths and use async workers for non-critical operations to keep request latency stable. Critically, I'd instrument everything—tracking p50/p95/p99 latency, error rates, and custom business metrics. I'd use canary deployments and feature flags for safe rollouts, and define clear SLOs for each service."
-        else:
-            return "I'd structure this as loosely coupled services with clear boundaries, each owning its data and scaling independently. For APIs, I'd design RESTful endpoints with pagination and caching headers, and document them with OpenAPI specs. For persistence, I'd choose the right tool—SQL for transactional data, a key-value store for caching, message queues for async processing. I'd prioritize observability from day one with structured logging, distributed tracing, and alerting so issues are caught and understood quickly."
+            return "I'd architect this with independent microservices behind an API gateway, with stateless compute to enable horizontal scaling. For the data layer, I'd use sharding if needed and a managed database for transactional consistency. I'd implement Redis for caching hot paths and use async workers for non-critical operations to keep request latency stable. Critically, I'd instrument everything by tracking p50, p95, and p99 latency, error rates, and business metrics. I'd use canary deployments and feature flags for safe rollouts, and I'd define clear SLOs for each service."
+        return "I'd structure this as loosely coupled services with clear boundaries, each owning its data and scaling independently. For APIs, I'd design RESTful endpoints with pagination and caching headers, and document them with OpenAPI specs. For persistence, I'd choose the right tool, using SQL for transactional data, a key-value store for caching, and message queues for async processing. I'd prioritize observability from day one with structured logging, distributed tracing, and alerting so issues are caught and understood quickly."
 
-    # Incident and troubleshooting questions
     if any(token in q for token in ["incident", "outage", "production", "downtime", "debug", "troubleshoot", "monitoring"]):
-        return "During a production incident, my first priority is stabilization and communication. I enable a feature flag rollback to stop the bleeding, then post status updates every 15 minutes so stakeholders know we're on top of it. While that's happening, I examine logs, traces, and recent changes in parallel—we discovered a database timeout regression in the latest deployment. After shipping a hotfix and validating recovery through dashboards (error rate dropped from 12% to 0.3%), I ran a blameless postmortem. We added a load-test scenario to catch that class of failure earlier, tuned alerting so we catch similar issues 10x faster, and documented the fix for future reference."
+        return "During a production incident, my first priority is stabilization and communication. I would enable rollback or feature flags to stop the bleeding, then post status updates every 15 minutes so stakeholders know we're on top of it. While that's happening, I would examine logs, traces, and recent changes in parallel. After shipping a hotfix and validating recovery through dashboards, I would run a blameless postmortem, then add tests, alerting, or runbooks so the issue is less likely to recur."
 
-    # Performance optimization questions
     if any(token in q for token in ["performance", "latency", "slow", "optimize", "bottleneck"]):
-        return "I start with data: profiling traces to see where latency accumulates, and looking at percentiles (p95/p99) not just averages. In a recent project, I found that 5% of requests were hitting a slow database query. I optimized it with better indexing and added a cache layer with explicit invalidation rules for that hot path. These changes reduced p95 latency from 840ms to 460ms and cut infrastructure costs by 18%. I also added performance budgets in CI so regressions are caught before deployment, and I set up real user monitoring (RUM) to track improvements in production."
+        return "I start with data: profiling traces to see where latency accumulates, and I look at percentiles like p95 and p99, not just averages. In a recent project, I found that 5% of requests were hitting a slow database query. I optimized it with better indexing and added a cache layer with explicit invalidation rules for that hot path. These changes reduced p95 latency from 840ms to 460ms and cut infrastructure costs by 18%. I also added performance budgets in CI so regressions are caught before deployment, and I set up real user monitoring to track improvements in production."
 
-    # Testing and quality questions
     if any(token in q for token in ["testing", "quality", "qa", "bug", "defect", "test strategy"]):
         return "I recommend a layered testing pyramid: unit tests for core logic, integration tests at service boundaries, and a focused smoke suite for each release. On a recent project, I added contract tests between services and fixed flaky end-to-end checks by eliminating timing dependencies and database state pollution. We introduced risk-based test selection so critical user paths were always tested before deployment. Over two quarters, this brought production bug escape rate down by 41%, and it gave the team more confidence to ship faster."
 
-    # Collaboration and soft skills questions
     if any(token in q for token in ["stakeholder", "conflict", "team", "cross-functional", "communicate", "leadership", "disagree"]):
-        return "I translate technical concerns into business impact: 'This approach trades off feature speed for 40% lower incident rate and better team morale.' On a cross-functional shipping deadline, I facilitated a decision workshop, presented options with trade-offs, and proposed a phased approach. That kept momentum, reduced debate churn, and we shipped the first milestone two weeks early. I follow up with concise written summaries so stakeholders and teammates stay aligned. I believe the best technical decisions come when everyone understands the context and constraints."
+        return "I translate technical concerns into business impact: this approach trades off feature speed for lower incident rate and better team morale. On a cross-functional shipping deadline, I facilitated a decision workshop, presented options with trade-offs, and proposed a phased approach. That kept momentum, reduced debate churn, and we shipped the first milestone two weeks early. I follow up with concise written summaries so stakeholders and teammates stay aligned. I believe the best technical decisions come when everyone understands the context and constraints."
 
-    # Learning and growth questions
     if any(token in q for token in ["learn", "growth", "technology", "improve", "new skill", "challenge", "difficult"]):
-        return "I actively seek projects that stretch me technically. When I first took on a distributed systems project, I read papers, built toy systems locally, and paired with a senior engineer to understand consensus algorithms. That investment paid off—I led the migration of our checkout service to handle 10x traffic with lower latency and 99.99% reliability. I share knowledge through code reviews, lunch-and-learns, and documentation. I believe learning is a team sport—I learn fastest when I'm helping others and receiving thoughtful feedback."
+        return "I actively seek projects that stretch me technically. When I first took on a distributed systems project, I read papers, built toy systems locally, and paired with a senior engineer to understand consensus algorithms. That investment paid off because I later led the migration of our checkout service to handle 10x traffic with lower latency and 99.99% reliability. I share knowledge through code reviews, lunch-and-learns, and documentation. I believe learning is a team sport, and I learn fastest when I'm helping others and receiving thoughtful feedback."
 
-    # Prioritization and trade-offs questions
     if any(token in q for token in ["prioritize", "trade-off", "deadline", "constraint", "scope", "velocity"]):
-        return "I start by understanding business context: which features drive revenue, which reduce churn, which improve reliability for key customer segments? When faced with tech debt vs. shipping features, I quantify impact both ways. If tech debt is blocking velocity significantly, I propose a scoped payoff (one week, not a month). On one project, we batched together small refactors that collectively made deployments 3x faster, unblocking 2 product features we'd otherwise delayed. The key is making trade-offs visible and data-driven, not just technical hunches."
+        return "I start by understanding business context: which features drive revenue, which reduce churn, and which improve reliability for key customer segments? When faced with tech debt versus shipping features, I quantify impact both ways. If tech debt is blocking velocity significantly, I propose a scoped payoff rather than a large rewrite. On one project, we batched together small refactors that collectively made deployments 3x faster, unblocking two product features we'd otherwise delayed. The key is making trade-offs visible and data-driven, not just based on technical hunches."
 
-    # Code quality and best practices questions
     if any(token in q for token in ["code quality", "maintainability", "refactor", "clean code", "best practice"]):
-        return "I write code assuming someone else (or future me!) will read it in a high-pressure moment. That means naming variables clearly, keeping functions small and focused, and using comments to explain 'why' not 'what'. On my team, we practice active code review—I give feedback that teaches, not just corrects. When I see repeated patterns, I extract them into shared utilities or services. I also prioritize removing dead code and simplifying overly complex logic. One year, we reduced onboarding time for new engineers from 6 weeks to 3 weeks because the codebase was clearer."
+        return "I write code assuming someone else or future me will read it in a high-pressure moment. That means naming variables clearly, keeping functions small and focused, and using comments to explain why rather than what. On my team, we practice active code review, and I give feedback that teaches, not just corrects. When I see repeated patterns, I extract them into shared utilities or services. I also prioritize removing dead code and simplifying overly complex logic. One year, we reduced onboarding time for new engineers from 6 weeks to 3 weeks because the codebase was clearer."
 
-    # Generic fallback for less common questions
     topic_tokens = _keyword_tokens(question)[:3]
     topic_hint = ", ".join(topic_tokens) if topic_tokens else "the problem"
     return (
         f"For a {role} role and this question about {topic_hint}, I would start by clarifying requirements and constraints. "
         "I'd then outline a pragmatic approach that balances delivery speed with quality, backed by examples from my experience. "
         "For instance, I've tackled similar problems by implementing the simplest solution that met requirements, adding monitoring to detect edge cases in production, "
-        "and iterating based on real user feedback. This approach has consistently reduced time-to-value by 30-40% while keeping incident rates low. "
+        "and iterating based on real user feedback. This approach has consistently reduced time-to-value while keeping incident rates low. "
         "I'd also make sure the team understands the approach and can maintain it long-term, because code is a team asset."
     )
+
+
+def _fallback_real_world_answer(role: str, question: str) -> str:
+    prefix = _reference_answer_prefix(question)
+    answer_body = _reference_answer_body(role, question)
+    return f"{prefix}\nReference answer: {answer_body}"
 
 
 def _split_sentences(text: str) -> list[str]:
@@ -489,7 +551,7 @@ Analyze the candidate's answer and return ONLY valid JSON (no markdown, no code 
         }
     ],
     "corrected_answer": "<full corrected version of the candidate answer or a polished answer that preserves meaning>",
-    "real_world_answer": "<realistic production-grade answer to the same question for this role, 4-6 sentences, practical and measurable>",
+    "real_world_answer": "<start with the question type and how the candidate should explain the answer, then give a realistic production-grade answer to the same question for this role, 4-6 sentences, practical and measurable>",
   "sample_better_answer": "<3-4 sentence example answer using STAR: Situation/Task, Action taken, measurable Results+ why it matters>"
 }}
 
@@ -504,7 +566,7 @@ FEEDBACK GUIDELINES:
 - Grammar issues: list exact excerpts from the candidate answer, explain the issue, and give the corrected form
 - Sentence corrections: provide sentence-by-sentence before/after pairs with a short note explaining each change
 - Corrected answer: rewrite the candidate's response as a polished version that preserves their meaning
-- Real-world answer: provide a strong, realistic reference answer someone could give in an actual interview for this role/question
+- Real-world answer: first identify the question type and explain the kind of explanation the candidate should give, then provide a strong, realistic reference answer that directly addresses the exact question
 - Sample answer: show 3-4 sentences that incorporate STAR method with realistic metrics/outcomes
 
 IMPORTANT:
