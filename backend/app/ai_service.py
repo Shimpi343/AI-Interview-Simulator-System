@@ -614,6 +614,11 @@ Return ONLY the JSON object, no explanation.
 
     if not parsed["real_world_answer"] or not _is_relevant_real_world_answer(question, parsed["real_world_answer"]):
         parsed["real_world_answer"] = _fallback_real_world_answer(role, question)
+    else:
+        prefix = _reference_answer_prefix(question)
+        stripped_answer = parsed["real_world_answer"].strip()
+        if not stripped_answer.lower().startswith("question type:"):
+            parsed["real_world_answer"] = f"{prefix}\nReference answer: {stripped_answer}"
 
     return parsed
 
