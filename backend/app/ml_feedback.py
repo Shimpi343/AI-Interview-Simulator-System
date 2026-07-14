@@ -318,8 +318,29 @@ def load_feedback_model(model_path: Path | str = MODEL_PATH) -> Optional[LocalFe
     )
 
 
+def _question_pattern(question: str) -> str:
+    q = question.lower()
+
+    if any(token in q for token in ["tell me about yourself", "introduce yourself", "background", "fit for your background"]):
+        return "intro"
+    if any(token in q for token in ["time you", "tell me about a time", "describe a time", "behavioral", "conflict", "stakeholder", "team"]):
+        return "behavioral"
+    if any(token in q for token in ["design", "architecture", "scalable", "system", "trade-offs", "monitor"]):
+        return "system_design"
+    if any(token in q for token in ["incident", "production", "debug", "troubleshoot", "latency", "error rate", "outage"]):
+        return "incident"
+    if any(token in q for token in ["testing", "test strategy", "qa", "bug", "release"]):
+        return "testing"
+    if any(token in q for token in ["performance", "optimize", "slow", "bottleneck"]):
+        return "performance"
+    if any(token in q for token in ["prioritize", "deadline", "trade-off", "constraint", "scope"]):
+        return "prioritization"
+    return "general"
+
+
 def generate_ml_feedback(role: str, question: str, answer: str, scores: dict[str, int]) -> dict[str, list[str]]:
     features = extract_features(role, question, answer)
+    pattern = _question_pattern(question)
 
     highlights: list[str] = []
     improvements: list[str] = []
@@ -346,15 +367,28 @@ def generate_ml_feedback(role: str, question: str, answer: str, scores: dict[str
 
     if not highlights:
         highlights = [
-            "You stayed on topic and attempted to explain your process.",
-            "Your answer can become strong with better structure and clearer outcomes.",
+            "You stayed on topic and made an effort to answer the interviewer directly.",
+            "Your response is a good base for a STAR-style interview answer with clearer structure.",
         ]
 
     if not improvements:
         improvements = [
-            "Keep the same content quality and tighten your phrasing for a more interview-ready response.",
-            "Include one quantified result in every answer for stronger impact.",
+            "Lead with the outcome, then explain the action you took so the interviewer can follow your reasoning.",
+            "Add one measurable result, such as latency, revenue, bug reduction, or time saved.",
         ]
+
+    pattern_tips = {
+        "intro": "For intro questions, keep it to your current role, one strong result, and why this role fits your next step.",
+        "behavioral": "For behavioral questions, use STAR: situation, task, action, and result. Keep the result measurable.",
+        "system_design": "For design questions, start with requirements and constraints, then explain architecture, trade-offs, and monitoring.",
+        "incident": "For incident questions, say how you stabilized the issue first, then how you diagnosed it, fixed it, and prevented a repeat.",
+        "testing": "For testing questions, explain what you covered first, why those cases mattered, and how quality improved.",
+        "performance": "For performance questions, name the bottleneck, the metric you improved, and the change that moved the metric.",
+        "prioritization": "For prioritization questions, explain the business constraint, the options you compared, and why you chose one path.",
+        "general": "In a real interview, answer directly first, then add one example and one result.",
+    }
+
+    improvements.insert(0, pattern_tips.get(pattern, pattern_tips["general"]))
 
     return {
         "highlights": highlights[:4],

@@ -52,25 +52,109 @@ def _openai_client() -> OpenAI:
 
 
 def _fallback_question(role: str, difficulty: str, history: List[InterviewTurn]) -> str:
-    general_bank = {
-        "easy": [
-            "Can you introduce yourself and explain why you are interested in this role?",
-            "What is one project you are proud of, and what was your contribution?",
-        ],
-        "medium": [
-            "Describe a technical challenge you solved recently. How did you approach it?",
-            "How do you balance code quality, delivery speed, and stakeholder expectations?",
-        ],
-        "hard": [
-            "Design a scalable architecture for a high-traffic application and justify your trade-offs.",
-            "Tell me about a production incident you handled. How did you diagnose and fix it?",
-        ],
+    role_lower = role.lower()
+
+    def role_focus() -> str:
+        if any(token in role_lower for token in ["frontend", "ui", "web"]):
+            return "frontend"
+        if any(token in role_lower for token in ["backend", "api", "service"]):
+            return "backend"
+        if any(token in role_lower for token in ["devops", "infrastructure", "sre", "platform"]):
+            return "platform"
+        if any(token in role_lower for token in ["data", "ml", "machine learning"]):
+            return "data"
+        if any(token in role_lower for token in ["qa", "quality", "test", "automation"]):
+            return "quality"
+        return "general"
+
+    question_bank = {
+        "easy": {
+            "general": [
+                "Tell me about yourself and why this role is a fit for your background.",
+                "What project are you most proud of, and what was your direct contribution?",
+            ],
+            "frontend": [
+                "How have you improved the performance or accessibility of a UI you owned?",
+                "Walk me through a frontend feature you shipped from design to production.",
+            ],
+            "backend": [
+                "Describe a backend service you built and how you kept it reliable.",
+                "How do you structure an API so it is easy for other teams to use?",
+            ],
+            "platform": [
+                "What automation have you added that saved the team time or reduced errors?",
+                "How do you keep deployments safe and repeatable?",
+            ],
+            "data": [
+                "Describe a data or ML project you worked on and the business impact.",
+                "How do you decide whether a model or analysis is good enough to ship?",
+            ],
+            "quality": [
+                "How do you decide what to test first when a release is at risk?",
+                "Describe a bug you prevented before it reached production.",
+            ],
+        },
+        "medium": {
+            "general": [
+                "Tell me about a time you solved a difficult problem under pressure.",
+                "How do you balance speed, quality, and stakeholder expectations when priorities conflict?",
+            ],
+            "frontend": [
+                "Tell me about a UI performance bottleneck you investigated and fixed.",
+                "How do you handle state management and maintainability in a growing frontend codebase?",
+            ],
+            "backend": [
+                "Describe a production issue in a backend service and how you diagnosed it.",
+                "How do you design an API that can handle growth without becoming brittle?",
+            ],
+            "platform": [
+                "Tell me about an incident where you improved reliability or recovery time.",
+                "How do you reduce deployment risk when multiple services are changing at once?",
+            ],
+            "data": [
+                "How would you explain a model or data pipeline trade-off to a non-technical stakeholder?",
+                "Tell me about a time your data work changed the direction of a decision.",
+            ],
+            "quality": [
+                "How do you build confidence in a release when time is limited?",
+                "Tell me about a testing strategy that caught an important issue early.",
+            ],
+        },
+        "hard": {
+            "general": [
+                "Walk me through how you would make a high-impact decision when the requirements are still changing.",
+                "Tell me about a time you led others through an ambiguous or contentious technical decision.",
+            ],
+            "frontend": [
+                "Design a frontend architecture for a large product with performance, accessibility, and reuse constraints. What trade-offs do you make?",
+                "How would you prevent a complex frontend from becoming difficult to debug and maintain?",
+            ],
+            "backend": [
+                "Design a scalable backend service for high traffic. What would you cache, queue, and monitor?",
+                "How would you handle a production incident that is affecting latency and error rates across multiple services?",
+            ],
+            "platform": [
+                "Design a deployment and observability strategy for a system with many services and frequent releases.",
+                "How would you reduce blast radius when a rollout goes wrong in production?",
+            ],
+            "data": [
+                "How would you design an ML or analytics pipeline that stays reliable as data volume and usage grow?",
+                "What trade-offs would you make between model accuracy, latency, and maintainability?",
+            ],
+            "quality": [
+                "How would you design a test strategy for a system with frequent releases and limited time?",
+                "How do you measure whether your testing approach is actually reducing risk?",
+            ],
+        },
     }
+
+    general_bank = question_bank.get(difficulty, question_bank["medium"])
+    role_bank = general_bank.get(role_focus(), general_bank["general"])
     asked = {turn.question.strip().lower() for turn in history}
-    choices = [q for q in general_bank[difficulty] if q.strip().lower() not in asked]
+    choices = [q for q in role_bank if q.strip().lower() not in asked]
     if not choices:
-        choices = general_bank[difficulty]
-    return f"For a {role} position: {random.choice(choices)}"
+        choices = role_bank
+    return random.choice(choices)
 
 
 def generate_interview_question(role: str, difficulty: str, history: List[InterviewTurn]) -> str:
@@ -78,8 +162,9 @@ def generate_interview_question(role: str, difficulty: str, history: List[Interv
         return _fallback_question(role, difficulty, history)
 
     system_prompt = (
-        "You are a strict but fair technical interviewer. Ask one concise interview question only. "
-        "Do not include bullets or explanations."
+        "You are a strict but fair interviewer. Ask one realistic interview question only. "
+        "Match common interview patterns such as behavioral, technical, situational, system design, or debugging. "
+        "Do not include bullets, explanations, or follow-up prompts."
     )
 
     turns = "\n".join(
@@ -90,7 +175,7 @@ def generate_interview_question(role: str, difficulty: str, history: List[Interv
         f"Role: {role}\n"
         f"Difficulty: {difficulty}\n"
         f"Previous turns:\n{turns if turns else 'None'}\n\n"
-        "Ask the next best interview question."
+        "Ask the next best interview question. Make it feel like a real interviewer would ask it and avoid vague wording."
     )
 
     try:
